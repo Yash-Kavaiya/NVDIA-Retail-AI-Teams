@@ -111,8 +111,18 @@ class RetrievalPipeline:
             List of relevant passages with scores
         """
         try:
-            # Generate query embedding
-            query_embedding = await self.embedding_generator.generate_embedding(query)
+            # Generate query embedding (sync call wrapped in async)
+            loop = asyncio.get_event_loop()
+            query_embedding = await loop.run_in_executor(
+                None,
+                self.embedding_generator.generate_embedding,
+                query,
+                "query"  # input_type for queries
+            )
+            
+            if query_embedding is None:
+                logger.error("Failed to generate query embedding")
+                return []
             
             # Vector search
             vector_results = self.qdrant_manager.search(

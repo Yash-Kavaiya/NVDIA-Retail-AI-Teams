@@ -2,6 +2,8 @@
 
 A complete document processing pipeline for customer support PDFs using NVIDIA NeMo Retriever embeddings, Docling for extraction, and Qdrant for vector storage.
 
+In detail blog with screenshot :- https://medium.com/@yash.kavaiya3/building-a-smart-customer-support-agent-using-nvidia-embedding-and-qdrant-vector-db-c5067aadb777
+
 ## Features
 
 - **PDF Extraction**: Uses Docling library for robust PDF document parsing
@@ -117,6 +119,11 @@ BATCH_SIZE=10
 REQUEST_TIMEOUT=60
 ```
 
+Install below if you face some error
+```
+sudo apt-get update
+sudo apt-get install -y libgl1-mesa-glx
+```
 ## Module Overview
 
 ### `config/config.py`
@@ -165,35 +172,6 @@ REQUEST_TIMEOUT=60
 - **Purpose**: Refine top-k results from vector search
 - **Use case**: Improves relevance ranking after initial retrieval
 
-## Example Workflow
-
-```python
-from pathlib import Path
-from config.config import Config
-from src.load_data import CustomerSupportPipeline, SearchPipeline
-
-# Load configuration
-config = Config.from_env()
-
-# Process documents
-pipeline = CustomerSupportPipeline(config)
-stats = pipeline.process_directory(Path("data"))
-
-print(f"Processed {stats['documents_processed']} documents")
-print(f"Created {stats['chunks_stored']} searchable chunks")
-
-# Search
-search_pipeline = SearchPipeline(config)
-results = search_pipeline.search(
-    query="What are the safety requirements?",
-    top_k=5
-)
-
-for result in results:
-    print(f"Score: {result['score']:.4f}")
-    print(f"Source: {result['source_filename']}")
-    print(f"Text: {result['text'][:200]}...")
-```
 
 ## Data Files
 
@@ -265,33 +243,3 @@ Add tests in a `tests/` directory:
 ```bash
 pytest tests/ -v
 ```
-
-### Contributing
-
-1. Follow existing code structure
-2. Add logging for all operations
-3. Include error handling
-4. Document public methods
-5. Follow type hints conventions
-
-## License
-
-See LICENSE file in repository root.
-
-## Support
-
-For issues or questions:
-1. Check logs for detailed error messages
-2. Verify configuration in `.env`
-3. Ensure all dependencies are installed
-4. Check NVIDIA API status
-
-## Future Enhancements
-
-- [ ] Add async/await for concurrent processing
-- [ ] Implement reranking in search pipeline
-- [ ] Add support for more document formats
-- [ ] Create web API interface
-- [ ] Add monitoring and metrics
-- [ ] Implement incremental updates
-- [ ] Add document deduplication

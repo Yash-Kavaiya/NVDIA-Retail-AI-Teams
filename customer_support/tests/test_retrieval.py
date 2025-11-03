@@ -13,7 +13,7 @@ from src.retrieval import RetrievalPipeline
 @pytest.fixture
 def config():
     """Create test configuration."""
-    os.environ["NVIDIA_API_KEY"] = "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"
+    os.environ["NVIDIA_API_KEY"] = "nvapi_test_key"
     os.environ["NVIDIA_EMBEDDING_URL"] = "https://integrate.api.nvidia.com/v1/embeddings"
     os.environ["NVIDIA_RERANK_URL"] = "https://integrate.api.nvidia.com/v1/ranking"
     os.environ["QDRANT_URL"] = "http://localhost:6333"
