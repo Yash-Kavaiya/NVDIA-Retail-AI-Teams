@@ -1,14 +1,8 @@
-# NVIDIA AI Teams
+# NVIDIA Retail AI Agent Teams
 
 Multi-modal AI system combining document processing, image embeddings, and conversational AI for retail compliance and customer support.
 
-## 🚀 Quick Start
-
-### Prerequisites
-- Python 3.8+
-- Docker (for Qdrant)
-- Node.js 18+ (for AI Agent UI)
-- NVIDIA API Key (already configured in `.env` files)
+<img width="758" height="512" alt="ChatGPT Image Nov 1, 2025, 06_09_53 PM" src="https://github.com/user-attachments/assets/79070147-b725-4052-934c-e965886e1130" />
 
 ### 1. Start Qdrant Vector Database
 
