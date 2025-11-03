@@ -6,7 +6,6 @@ This is a starter template for building AI agents using Google's [ADK](https://g
 
 - Node.js 18+
 - Python 3.12+
-- Google Makersuite API Key (for the ADK agent) (see https://makersuite.google.com/app/apikey)
 - Any of the following package managers:
   - pnpm (recommended)
   - npm
@@ -53,12 +52,6 @@ bun run install:agent
 > ```bash
 > source agent/.venv/bin/activate
 > ```
-
-
-3. Set up your Google API key:
-```bash
-export GOOGLE_API_KEY="your-google-api-key-here"
-```
 
 4. Start the development server:
 ```bash
