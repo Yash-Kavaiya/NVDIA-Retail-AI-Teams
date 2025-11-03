@@ -1,5 +1,5 @@
 # Core dependencies
-python-dotenv
+python-dotenv==1.2.1
 
 # Document processing
 docling>=2.58.0
@@ -8,8 +8,16 @@ docling>=2.58.0
 openai==1.58.1
 
 # Vector database
-qdrant-client==1.12.1
+qdrant-client==1.15.1
+
+# Data Processing
+pandas==2.3.3
+numpy==2.3.4
 
 # Utilities
-aiohttp==3.11.11
-requests==2.32.3
+aiohttp==3.13.2
+requests==2.32.5
+
+# Testing (optional)
+pytest>=7.0.0
+ragas>=0.1.0

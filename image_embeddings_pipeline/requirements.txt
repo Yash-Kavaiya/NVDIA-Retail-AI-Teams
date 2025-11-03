@@ -1,6 +1,22 @@
-python-dotenv
-pandas 
-requests 
-pillow 
-qdrant-client
-aiohttp
+# Core dependencies
+python-dotenv==1.2.1
+
+# Data Processing
+pandas==2.3.3
+numpy==2.3.4
+
+# Image Processing
+pillow==12.0.0
+
+# Vector Database
+qdrant-client==1.15.1
+
+# HTTP & Networking
+aiohttp==3.13.2
+requests==2.32.5
+
+# NVIDIA embeddings (OpenAI-compatible client)
+openai==2.6.1
+
+# Testing (optional)
+pytest>=7.0.0
