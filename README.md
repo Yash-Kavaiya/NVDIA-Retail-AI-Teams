@@ -4,44 +4,6 @@ Multi-modal AI system combining document processing, image embeddings, and conve
 
 <img width="758" height="512" alt="ChatGPT Image Nov 1, 2025, 06_09_53 PM" src="https://github.com/user-attachments/assets/79070147-b725-4052-934c-e965886e1130" />
 
-### 1. Start Qdrant Vector Database
-
-```bash
-docker run -d -p 6333:6333 -p 6334:6334 -v qdrant_storage:/qdrant/storage --name qdrant qdrant/qdrant
-
-```
-
-### 2. Document Processing Pipeline (NEW!)
-
-Process PDFs and enable semantic search:
-
-```bash
-cd Customer_support/Code/document_pipeline
-pip install -r requirements.txt
-python main.py process ../Data
-python main.py search "retail compliance requirements"
-```
-
-### 3. Image Embeddings Pipeline
-
-Process fashion images and enable visual search:
-
-```bash
-cd image_embeddings_pipeline
-pip install -r requirements.txt
-python main.py
-```
-
-### 4. AI Agent UI
-
-Interactive AI agent with CopilotKit:
-
-```bash
-cd nvdia-ag-ui
-npm install
-npm run dev
-```
-
 <img width="800" height="900" alt="diagram-export-11-3-2025-5_19_08-PM" src="https://github.com/user-attachments/assets/44d6a405-321b-4b6e-a2fa-a8264a42f860" />
 
 
