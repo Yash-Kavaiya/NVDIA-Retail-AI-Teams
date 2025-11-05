@@ -9,13 +9,18 @@ Multi-modal AI system combining document processing, image embeddings, and conve
 
 ## 🎯 Key Features
 
-### Document Processing (NEW!)
-- **Docling PDF Extraction** - Structured text extraction with table detection
-- **NVIDIA Embeddings** - `llama-3.2-nemoretriever-300m-embed-v2` (2048-dim vectors)
-- **NVIDIA Reranking** - `llama-3.2-nv-rerankqa-1b-v2` for precision
-- **SOLID Architecture** - Clean, maintainable, testable code
-- **Two-Stage Retrieval** - Fast vector search + precise reranking
+## Customer Support Document Pipeline
+A complete document processing pipeline for customer support PDFs using NVIDIA NeMo Retriever embeddings, Docling for extraction, and Qdrant for vector storage.
 
+In detail blog with screenshot :- https://medium.com/@yash.kavaiya3/building-a-smart-customer-support-agent-using-nvidia-embedding-and-qdrant-vector-db-c5067aadb777
+
+### Features
+- PDF Extraction: Uses Docling library for robust PDF document parsing
+- Smart Chunking: Hierarchical chunking that respects document structure
+- NVIDIA Embeddings: State-of-the-art embeddings using llama-3.2-nemoretriever-300m-embed-v2
+- Vector Storage: Efficient storage and retrieval using Qdrant
+- Reranking: Improved relevance with llama-3.2-nv-rerankqa-1b-v2
+- SOLID Architecture: Clean, maintainable code following best practices
 ### Image Embeddings
 - Async image processing pipeline
 - NVIDIA multimodal embeddings
