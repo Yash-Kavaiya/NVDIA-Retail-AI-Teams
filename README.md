@@ -42,6 +42,9 @@ npm install
 npm run dev
 ```
 
+<img width="800" height="900" alt="diagram-export-11-3-2025-5_19_08-PM" src="https://github.com/user-attachments/assets/44d6a405-321b-4b6e-a2fa-a8264a42f860" />
+
+
 ## 🎯 Key Features
 
 ### Document Processing (NEW!)
