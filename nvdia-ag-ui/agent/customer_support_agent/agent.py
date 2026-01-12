@@ -10,7 +10,7 @@ from .tools import search_policy_documents, get_collection_info
 from google.adk.models.lite_llm import LiteLlm
 root_agent = Agent(
     name='customer_support_agent',
-    model=LiteLlm(model="nvidia_nim/nvidia/llama-3.1-nemotron-nano-8b-v1"),
+    model="gemini-2.0-flash",
     description='An intelligent customer support agent that answers policy questions using RAG retrieval from retail compliance documents stored in Qdrant.',
     tools=[search_policy_documents, get_collection_info],
     instruction="""

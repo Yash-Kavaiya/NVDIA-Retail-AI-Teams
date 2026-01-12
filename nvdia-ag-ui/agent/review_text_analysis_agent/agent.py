@@ -10,7 +10,7 @@ from . import tools
 from google.adk.models.lite_llm import LiteLlm
 root_agent = Agent(
     name='review_text_analysis_agent',
-    model=LiteLlm(model="nvidia_nim/nvidia/llama-3.1-nemotron-nano-8b-v1"),
+    model="gemini-2.0-flash",
     description='Specialized agent for analyzing customer reviews, extracting sentiment, identifying issues, and providing actionable insights from Walmart customer feedback.',
     instruction="""
 You are a Customer Review Analysis Specialist with expertise in text analytics and sentiment analysis. 

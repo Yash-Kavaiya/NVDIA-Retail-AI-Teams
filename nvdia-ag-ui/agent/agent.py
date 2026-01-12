@@ -113,7 +113,7 @@ def simple_after_model_modifier(
 from google.adk.models.lite_llm import LiteLlm
 retail_coordinator = LlmAgent(
         name="retail_coordinator",
-        model=LiteLlm(model="nvidia_nim/nvidia/llama-3.1-nemotron-nano-8b-v1"),
+        model="gemini-2.0-flash",
         instruction=f"""
         You are the main coordinator for a comprehensive retail agent team. Your role is to:
     

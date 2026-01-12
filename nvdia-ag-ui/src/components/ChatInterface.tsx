@@ -5,10 +5,10 @@ import { NvidiaLogo } from "./NvidiaLogo";
 
 // Helper function to format timestamp consistently
 function formatTimestamp(date: Date): string {
-  return date.toLocaleTimeString('en-US', { 
-    hour: '2-digit', 
+  return date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
     minute: '2-digit',
-    hour12: true 
+    hour12: true
   });
 }
 
@@ -48,7 +48,7 @@ const quickSuggestions: Suggestion[] = [
   {
     icon: "💬",
     text: "Customer Support",
-    description: "Access support documents",
+    description: "Access support knowledge base",
   },
 ];
 
@@ -151,7 +151,7 @@ export function ChatInterface() {
             if (line.startsWith('data: ')) {
               try {
                 const data = JSON.parse(line.slice(6));
-                
+
                 // Handle ADK event types
                 switch (data.type) {
                   case 'TEXT_MESSAGE_START':
@@ -173,7 +173,7 @@ export function ChatInterface() {
                     // Append content delta
                     if (data.delta) {
                       assistantContent += data.delta;
-                      setMessages((prev) => 
+                      setMessages((prev) =>
                         prev.map((msg) =>
                           msg.id === assistantMessageId
                             ? { ...msg, content: assistantContent }
@@ -188,16 +188,9 @@ export function ChatInterface() {
                     console.log('Message completed:', assistantContent);
                     break;
 
-                  case 'RUN_STARTED':
-                  case 'RUN_FINISHED':
-                  case 'STATE_DELTA':
-                  case 'STATE_SNAPSHOT':
-                    // Log these events but don't show in UI
-                    console.debug('ADK Event:', data.type);
-                    break;
-
                   default:
-                    console.debug('Unknown event type:', data.type);
+                    // Ignore other events
+                    break;
                 }
               } catch (e) {
                 // Ignore parse errors for non-JSON lines
@@ -209,7 +202,7 @@ export function ChatInterface() {
       }
 
       // If we didn't get any content, show an error
-      if (!assistantContent) {
+      if (!assistantContent && !messageCreated) {
         const errorMessage: Message = {
           id: `error-${Date.now()}`,
           role: "assistant",
@@ -221,8 +214,6 @@ export function ChatInterface() {
 
     } catch (error) {
       console.error('Error sending message:', error);
-      
-      // Add detailed error message to chat
       const errorDetails = error instanceof Error ? error.message : String(error);
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
@@ -254,12 +245,12 @@ export function ChatInterface() {
       .split("\n")
       .map((line, i) => {
         // Bold text
-        line = line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-nvidia-green">$1</strong>');
+        line = line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-nvidia-green font-semibold">$1</strong>');
         // Bullet points
         if (line.trim().startsWith("•")) {
-          return `<div key="${i}" class="ml-4 my-1">${line}</div>`;
+          return `<div key="${i}" class="flex gap-2 my-1.5"><span class="text-nvidia-green">•</span><span>${line.substring(1)}</span></div>`;
         }
-        return `<div key="${i}" class="my-1">${line || "<br/>"}</div>`;
+        return `<div key="${i}" class="my-1.5 leading-relaxed">${line || "<br/>"}</div>`;
       })
       .join("");
   };
@@ -268,209 +259,203 @@ export function ChatInterface() {
   if (!isClient) {
     return (
       <div className="flex flex-col h-screen bg-nvidia-dark">
-        <header className="bg-nvidia-darker border-b border-nvidia-green/20 px-6 py-4 flex items-center justify-between shadow-lg">
+        <header className="bg-nvidia-dark-surface/80 backdrop-blur-md border-b border-nvidia-border/50 px-6 py-4 flex items-center justify-between shadow-lg">
           <div className="flex items-center gap-4">
             <NvidiaLogo className="w-32 h-8 text-white" />
-            <div className="h-6 w-px bg-nvidia-green/30" />
-            <h1 className="text-white font-semibold text-lg">Retail AI Agent Team</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-nvidia-gray text-sm hidden md:block">Powered by NVIDIA AI</span>
-            <div className="w-2 h-2 rounded-full bg-nvidia-green animate-pulse" />
           </div>
         </header>
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-nvidia-gray">Loading...</div>
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-8 h-8 rounded-full border-2 border-nvidia-green border-t-transparent animate-spin" />
+            <div className="text-nvidia-text-muted font-medium tracking-wide text-sm">INITIALIZING AI CORE...</div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-nvidia-dark">
+    <main className="flex-1 flex flex-col h-screen relative bg-nvidia-dark overflow-hidden">
+      {/* Ambient Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-nvidia-green/5 rounded-full blur-[120px] opacity-50 mix-blend-screen animate-pulse-slow" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-nvidia-purple/5 rounded-full blur-[120px] opacity-30 mix-blend-screen" />
+      </div>
+
       {/* Header */}
-      <header className="bg-nvidia-darker border-b border-nvidia-green/20 px-4 sm:px-6 md:px-8 py-4 md:py-5 flex items-center justify-between shadow-lg flex-shrink-0 relative z-20">
-        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-          <NvidiaLogo className="w-28 h-7 sm:w-32 sm:h-8 md:w-36 md:h-9 text-white flex-shrink-0" />
-          <div className="h-6 sm:h-7 w-px bg-nvidia-green/30 flex-shrink-0" />
-          <h1 className="text-white font-semibold text-base sm:text-lg md:text-xl truncate">Retail AI Agent Team</h1>
+      <header className="h-16 flex-shrink-0 border-b border-nvidia-border/50 glass flex items-center justify-between px-6 relative z-10">
+        <div className="flex items-center gap-4">
+          <NvidiaLogo className="w-28 h-auto text-nvidia-text" />
+          <div className="h-5 w-px bg-nvidia-border" />
+          <span className="text-nvidia-text-muted text-sm font-medium tracking-wide">Retail AI Agent</span>
         </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <span className="text-nvidia-gray text-sm hidden lg:block">Powered by NVIDIA AI</span>
-          <div className="w-2.5 h-2.5 rounded-full bg-nvidia-green animate-pulse" />
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-nvidia-green/10 border border-nvidia-green/20">
+            <div className="w-2 h-2 rounded-full bg-nvidia-green animate-pulse" />
+            <span className="text-xs font-semibold text-nvidia-green tracking-wide uppercase">Powered by NVIDIA AI</span>
+          </div>
         </div>
       </header>
 
-      {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6 md:px-8 lg:px-10 py-8 sm:py-10 md:py-12">
-        <div className="max-w-5xl mx-auto pb-8">
-          {/* Messages */}
-          <div className="space-y-5 sm:space-y-6 md:space-y-7">
-            {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} animate-fade-in`}
-          >
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar relative z-0">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+          {messages.map((message, index) => (
             <div
-              className={`max-w-full sm:max-w-[90%] md:max-w-4xl w-full ${
-                message.role === "user"
-                  ? "bg-nvidia-green/10 border border-nvidia-green/30"
-                  : message.role === "system"
-                  ? "bg-nvidia-purple/5 border border-nvidia-purple/20"
-                  : "bg-nvidia-darker border border-nvidia-border"
-              } rounded-xl sm:rounded-2xl px-4 sm:px-5 md:px-7 py-4 sm:py-5 md:py-6 shadow-lg`}
+              key={message.id}
+              className={`flex gap-4 ${message.role === "user" ? "flex-row-reverse" : "flex-row"
+                } animate-fade-in`}
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="flex items-start gap-3 sm:gap-4">
-                {message.role !== "user" && (
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-nvidia-green/20 flex items-center justify-center flex-shrink-0">
-                    <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6 text-nvidia-green"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                      />
-                    </svg>
-                  </div>
+              {/* Avatar */}
+              <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-lg ${message.role === "user"
+                  ? "bg-gradient-to-br from-nvidia-green to-nvidia-green-hover"
+                  : "bg-nvidia-dark-surface border border-nvidia-border"
+                }`}>
+                {message.role === "user" ? (
+                  <svg className="w-4 h-4 text-nvidia-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5 text-nvidia-green" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
+                  </svg>
                 )}
-                <div className="flex-1 min-w-0">
-                  <div
-                    className="text-nvidia-text text-base sm:text-lg leading-relaxed break-words"
-                    dangerouslySetInnerHTML={{ __html: formatContent(message.content) }}
-                  />
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-3 sm:mt-4">
-                    <span className="text-nvidia-gray text-sm">
-                      {isClient ? formatTimestamp(message.timestamp) : ''}
-                    </span>
-                    {message.metadata?.confidence && (
-                      <span className="text-nvidia-green text-sm font-medium whitespace-nowrap">
-                        {(message.metadata.confidence * 100).toFixed(0)}% confidence
-                      </span>
-                    )}
+              </div>
+
+              {/* Message Content */}
+              <div className={`flex flex-col max-w-[80%] ${message.role === "user" ? "items-end" : "items-start"}`}>
+                <div className="flex items-center gap-2 mb-1 px-1">
+                  <span className="text-xs font-medium text-nvidia-text-muted">
+                    {message.role === "user" ? "You" : "NVIDIA AI"}
+                  </span>
+                  <span className="text-[10px] text-nvidia-text-muted/60">
+                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+
+                <div
+                  className={`relative px-5 py-3.5 rounded-2xl shadow-md text-sm leading-relaxed ${message.role === "user"
+                      ? "bg-gradient-to-br from-nvidia-green to-nvidia-green-hover text-nvidia-dark font-medium rounded-tr-none shadow-glow-green-sm"
+                      : "bg-nvidia-dark-surface border border-nvidia-border/50 text-nvidia-text rounded-tl-none"
+                    }`}
+                >
+                  <div className="prose prose-invert max-w-none prose-p:leading-relaxed prose-strong:text-inherit">
+                    <div dangerouslySetInnerHTML={{ __html: formatContent(message.content) }} />
                   </div>
-                  {message.metadata?.sources && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {message.metadata.sources.map((source, idx) => (
-                        <span
-                          key={idx}
-                          className="text-xs bg-nvidia-green/10 text-nvidia-green px-3 py-1.5 rounded-lg truncate max-w-[200px] font-medium"
-                          title={source}
-                        >
-                          {source}
-                        </span>
-                      ))}
+
+                  {/* Confidence Score (Mock) */}
+                  {message.role === "assistant" && (
+                    <div className="mt-3 pt-2 border-t border-nvidia-border/30 flex items-center gap-2">
+                      <div className="flex items-center gap-1 text-[10px] text-nvidia-text-muted uppercase tracking-wider font-semibold">
+                        <svg className="w-3 h-3 text-nvidia-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Confidence: High
+                      </div>
                     </div>
                   )}
                 </div>
-                {message.role === "user" && (
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-nvidia-green flex items-center justify-center flex-shrink-0">
-                    <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6 text-nvidia-darker"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                  </div>
-                )}
               </div>
             </div>
-          </div>
-        ))}
-          </div>
+          ))}
 
-          {/* Quick Suggestions - Show only on welcome screen */}
-          {messages.length === 1 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-12 mb-8">
-              {quickSuggestions.map((suggestion, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleSuggestionClick(suggestion)}
-                  className="bg-nvidia-darker border border-nvidia-border hover:border-nvidia-green p-6 sm:p-7 rounded-xl text-left transition-all duration-200 hover:shadow-lg hover:shadow-nvidia-green/10 group active:scale-[0.98] min-h-[100px]"
-                >
-                  <div className="flex items-start gap-3 sm:gap-4">
-                    <span className="text-2xl sm:text-3xl flex-shrink-0 leading-none">{suggestion.icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-nvidia-text text-base sm:text-lg font-semibold group-hover:text-nvidia-green transition-colors">
-                        {suggestion.text}
-                      </h3>
-                      <p className="text-nvidia-gray text-sm sm:text-base mt-1 line-clamp-2">{suggestion.description}</p>
-                    </div>
+          {/* Loading Indicator */}
+          {isLoading && (
+            <div className="flex gap-4 animate-fade-in">
+              <div className="w-8 h-8 rounded-full bg-nvidia-dark-surface border border-nvidia-border flex items-center justify-center">
+                <svg className="w-5 h-5 text-nvidia-green animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+              </div>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 mb-1 px-1">
+                  <span className="text-xs font-medium text-nvidia-text-muted">NVIDIA AI</span>
+                </div>
+                <div className="px-5 py-3 rounded-2xl rounded-tl-none bg-nvidia-dark-surface border border-nvidia-border/50 shadow-sm flex items-center gap-3">
+                  <div className="flex gap-1">
+                    <div className="w-1.5 h-1.5 bg-nvidia-green rounded-full animate-bounce" style={{ animationDelay: '0s' }} />
+                    <div className="w-1.5 h-1.5 bg-nvidia-green rounded-full animate-bounce" style={{ animationDelay: '0.15s' }} />
+                    <div className="w-1.5 h-1.5 bg-nvidia-green rounded-full animate-bounce" style={{ animationDelay: '0.3s' }} />
                   </div>
+                  <span className="text-sm text-nvidia-text-muted font-medium">Processing...</span>
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+      </div>
+
+      {/* Input Area */}
+      <div className="flex-shrink-0 px-4 sm:px-6 pb-6 pt-4 relative z-20">
+        <div className="max-w-3xl mx-auto">
+          {/* Quick Suggestions (Only show when empty) */}
+          {messages.length === 1 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 animate-slide-up">
+              {[
+                { icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z", label: "Analyze Report", desc: "Upload & summarize PDF" },
+                { icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z", label: "Image Search", desc: "Find products by photo" },
+                { icon: "M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z", label: "Sales Trends", desc: "View performance data" },
+                { icon: "M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z", label: "Support Help", desc: "Query knowledge base" },
+              ].map((item, i) => (
+                <button
+                  key={i}
+                  onClick={() => setInput(item.label)}
+                  className="group flex flex-col items-center text-center p-3 rounded-xl bg-nvidia-dark-surface border border-nvidia-border hover:border-nvidia-green/50 hover:bg-nvidia-dark-elevated transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                >
+                  <div className="p-2 rounded-lg bg-nvidia-dark-elevated group-hover:bg-nvidia-green/10 text-nvidia-text-muted group-hover:text-nvidia-green transition-colors mb-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
+                    </svg>
+                  </div>
+                  <span className="text-xs font-semibold text-nvidia-text group-hover:text-white transition-colors">{item.label}</span>
                 </button>
               ))}
             </div>
           )}
 
-          {/* Typing Indicator */}
-          {isLoading && (
-            <div className="flex justify-start mt-4">
-              <div className="max-w-3xl bg-nvidia-darker border border-nvidia-border rounded-2xl px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-nvidia-green animate-bounce" />
-                  <div className="w-2 h-2 rounded-full bg-nvidia-green animate-bounce delay-100" />
-                  <div className="w-2 h-2 rounded-full bg-nvidia-green animate-bounce delay-200" />
-                </div>
-              </div>
-            </div>
-          )}
-          {/* Bottom spacer so last items never hide behind the input bar */}
-          <div className="h-36 sm:h-40 md:h-44" ref={messagesEndRef} />
-        </div>
-      </div>
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-nvidia-green/20 to-nvidia-purple/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
+            <div className="relative flex items-end gap-2 bg-nvidia-dark-surface/80 backdrop-blur-md border border-nvidia-border rounded-2xl p-2 shadow-2xl focus-within:border-nvidia-green/50 focus-within:ring-1 focus-within:ring-nvidia-green/20 transition-all duration-200">
+              <button className="p-2.5 text-nvidia-text-muted hover:text-nvidia-text hover:bg-nvidia-dark-elevated rounded-xl transition-colors" title="Attach file">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                </svg>
+              </button>
 
-      {/* Input Area */}
-      <div className="border-t border-nvidia-border bg-nvidia-darker px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 shadow-[0_-4px_20px_rgba(0,0,0,0.5)] flex-shrink-0 relative z-10">
-        <div className="max-w-5xl mx-auto">
-          <div className="relative flex items-end gap-3 sm:gap-4">
-            <div className="flex-1 relative">
               <textarea
                 ref={textareaRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Message NVIDIA Retail AI Agent..."
-                className="w-full bg-nvidia-dark border border-nvidia-border rounded-xl sm:rounded-2xl px-4 sm:px-5 md:px-6 py-3 sm:py-3.5 md:py-4 text-base text-nvidia-text placeholder-nvidia-gray focus:outline-none focus:border-nvidia-green focus:ring-2 focus:ring-nvidia-green/20 resize-none min-h-[52px] sm:min-h-[56px] md:min-h-[60px] max-h-[160px] sm:max-h-[180px] md:max-h-[200px] transition-all"
+                onKeyDown={handleKeyPress}
+                placeholder="Ask anything about retail data, inventory, or support..."
+                className="flex-1 bg-transparent text-nvidia-text placeholder-nvidia-text-muted/50 text-sm px-2 py-3 focus:outline-none resize-none max-h-48 custom-scrollbar"
                 rows={1}
               />
-            </div>
-            <button
-              onClick={handleSend}
-              disabled={!input.trim()}
-              className="bg-nvidia-green hover:bg-nvidia-green-hover disabled:bg-nvidia-gray disabled:cursor-not-allowed disabled:opacity-50 text-nvidia-darker font-semibold px-5 sm:px-6 md:px-8 py-3 sm:py-3.5 md:py-4 rounded-xl sm:rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-nvidia-green/20 active:scale-95 flex-shrink-0 min-h-[52px] sm:min-h-[56px] md:min-h-[60px]"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+
+              <button
+                onClick={handleSend}
+                disabled={!input.trim() || isLoading}
+                className={`p-2.5 rounded-xl transition-all duration-200 flex-shrink-0 ${input.trim() && !isLoading
+                    ? "bg-nvidia-green text-nvidia-dark hover:bg-nvidia-green-hover shadow-lg shadow-nvidia-green/20"
+                    : "bg-nvidia-dark-elevated text-nvidia-text-muted cursor-not-allowed"
+                  }`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                />
-              </svg>
-              <span className="hidden sm:inline text-base">Send</span>
-            </button>
+                <svg className="w-5 h-5 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19V5m0 0l-7 7m7-7l7 7" />
+                </svg>
+              </button>
+            </div>
+            <div className="text-center mt-3">
+              <p className="text-[10px] text-nvidia-text-muted/60">
+                NVIDIA AI can make mistakes. Please review sensitive information.
+              </p>
+            </div>
           </div>
-          <p className="text-nvidia-gray text-xs sm:text-sm mt-3 sm:mt-4 text-center px-2">
-            NVIDIA AI can make mistakes. Consider checking important information.
-          </p>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
